@@ -20,3 +20,9 @@ class PriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Price
         fields = '__all__'
+class PriceHistorySerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    
+    class Meta:
+        model = PriceHistory
+        fields = ['id', 'product', 'price', 'date']
