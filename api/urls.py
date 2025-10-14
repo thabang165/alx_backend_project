@@ -5,6 +5,7 @@ from django.urls import path
 from .views import (
     ProductListCreateView, ProductDetailView,
     PriceHistoryListCreateView, PriceHistoryDetailView
+    RegisterView
 )
 
 router = DefaultRouter()
