@@ -14,19 +14,34 @@ from .serializers import PriceSerializer
 
 @api_view(['GET'])
 def lowest_price(request, product_name):
-    try:
-        product = Product.objects.get(name__iexact=product_name)
-    except Product.DoesNotExist:
+    products = Product.objects.filter(name__iexact=product_name)
+    if not products.exists():
         return Response({"error": "Product not found"}, status=404)
 
-    prices = Price.objects.filter(product=product).order_by('amount')
+    # Combine all prices for all products with that name
+    prices = Price.objects.filter(product__in=products).order_by('amount')
     if not prices.exists():
         return Response({"message": "No prices available for this product"}, status=404)
 
     serializer = PriceSerializer(prices.first())
     return Response(serializer.data)
 
+@api_view(['GET'])
+def search_product(request, query):
+    """
+    Search products by name (partial, case-insensitive)
+    and return all prices across stores.
+    """
+    products = Product.objects.filter(name__icontains=query)
+    result = []
 
+    for product in products:
+        prices = Price.objects.filter(product=product)
+        product_data = ProductSerializer(product).data
+        product_data['prices'] = PriceSerializer(prices, many=True).data
+        result.append(product_data)
+
+    return Response(result)
 # existing views above...
 
 class RegisterView(generics.CreateAPIView):
