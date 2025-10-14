@@ -6,11 +6,15 @@ from rest_framework import generics, permissions
 from django.contrib.auth.models import User
 from .serializers import RegisterSerializer, ProductSerializer, PriceHistorySerializer
 from .models import Product, PriceHistory
-# api/views.py
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Product, Price
 from .serializers import PriceSerializer
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'product_price_comparer.html')
+
 
 @api_view(['GET'])
 def lowest_price(request, product_name):

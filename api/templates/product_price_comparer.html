@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Price Comparer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h1 {
+            text-align: center;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 8px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #noResults {
+            margin-top: 20px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Product Price Comparer</h1>
+
+    <div>
+        <input type="text" id="searchInput" placeholder="Enter product name">
+        <button onclick="searchProduct()">Search</button>
+    </div>
+
+    <div id="resultsContainer">
+        <table id="resultsTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Store</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Date Checked</th>
+                </tr>
+            </thead>
+            <tbody id="resultsBody">
+                <!-- Rows will be added dynamically -->
+            </tbody>
+        </table>
+        <div id="noResults" style="display: none;">No results found.</div>
+    </div>
+
+    <script>
+        async function searchProduct() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsTable = document.getElementById('resultsTable');
+            const resultsBody = document.getElementById('resultsBody');
+            const noResults = document.getElementById('noResults');
+
+            // Clear previous results
+            resultsBody.innerHTML = '';
+            resultsTable.style.display = 'none';
+            noResults.style.display = 'none';
+
+            if (!query) {
+                alert('Please enter a product name.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/search/${query}/`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    noResults.style.display = 'block';
+                    return;
+                }
+
+                data.forEach(product => {
+                    product.prices.forEach(price => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${price.product}</td>
+                            <td>${price.store}</td>
+                            <td>${price.amount}</td>
+                            <td>${price.currency}</td>
+                            <td>${price.date_checked}</td>
+                        `;
+                        resultsBody.appendChild(row);
+                    });
+                });
+
+                resultsTable.style.display = 'table';
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                noResults.textContent = 'Error fetching results. Please try again.';
+                noResults.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
+
