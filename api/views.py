@@ -6,6 +6,26 @@ from rest_framework import generics, permissions
 from django.contrib.auth.models import User
 from .serializers import RegisterSerializer, ProductSerializer, PriceHistorySerializer
 from .models import Product, PriceHistory
+# api/views.py
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import Product, Price
+from .serializers import PriceSerializer
+
+@api_view(['GET'])
+def lowest_price(request, product_name):
+    try:
+        product = Product.objects.get(name__iexact=product_name)
+    except Product.DoesNotExist:
+        return Response({"error": "Product not found"}, status=404)
+
+    prices = Price.objects.filter(product=product).order_by('amount')
+    if not prices.exists():
+        return Response({"message": "No prices available for this product"}, status=404)
+
+    serializer = PriceSerializer(prices.first())
+    return Response(serializer.data)
+
 
 # existing views above...
 
