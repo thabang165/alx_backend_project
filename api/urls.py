@@ -2,6 +2,11 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import ProductViewSet, StoreViewSet, PriceViewSet, RegisterView, lowest_price
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from .views import search_product
+
+urlpatterns = [
+    path('search/<str:query>/', search_product, name='search_product'),
+]
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet)
