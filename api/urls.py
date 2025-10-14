@@ -19,5 +19,6 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('lowest-price/<str:product_name>/', lowest_price, name='lowest-price'),
+    path('search/<str:query>/', search_product, name='search_product'),
 ]
 
