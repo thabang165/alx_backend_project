@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import Product, Store, Price
 from .models import Product, PriceHistory
+from django.contrib.auth.models import User
+
 
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:

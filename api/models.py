@@ -19,22 +19,22 @@ class Product(models.Model):
 
 
 class Price(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="prices")
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="prices")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="current_prices")
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="store_prices")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    currency = models.CharField(max_length=10, default="ZAR")
-    date = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["-date"]
+    currency = models.CharField(max_length=10)
+    date_checked = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.product.name} - {self.amount} {self.currency}
+        return f"{self.product.name} - {self.amount} {self.currency}"
+
 
 class PriceHistory(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='prices')
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField(auto_now_add=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="price_history")
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="store_price_history")
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=10)
+    date_checked = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.product.name} - {self.price} on {self.date}"
+        return f"{self.product.name} - {self.amount} {self.currency}"
